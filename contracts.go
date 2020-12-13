@@ -1,7 +1,8 @@
 package main
 
 type shortenUrlRequest struct {
-	S string `json:"s"`
+	FullUrl  string `json:"fullUrl"`
+	ShortUrl string `json:"shortUrl"`
 }
 
 type shortenUrlResponse struct {

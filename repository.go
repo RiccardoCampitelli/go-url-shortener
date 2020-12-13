@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -13,6 +15,7 @@ import (
 type Repository interface {
 	Init() error
 	FindById(id string) (interface{}, error)
+	InsertOne(id shortUrl) error
 }
 
 type repository struct {
@@ -22,29 +25,44 @@ type repository struct {
 func (repo *repository) FindById(id string) (interface{}, error) {
 	fmt.Println("Fetch by " + id)
 
-	thing := MongoFields{
-		FieldStr:  "Some Value",
-		FieldInt:  12345,
-		FieldBool: true,
-	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 
 	defer cancel()
 
-	_, err := repo.collection.InsertOne(ctx, thing)
+	// _, err := repo.collection.InsertOne(ctx, thing)
+
+	res := struct{ Fieldint int }{}
+
+	objectId, err := primitive.ObjectIDFromHex(id)
+
+	filter := bson.M{"_id": objectId}
+	// filter := bson.D{{"fieldstr", id}}
+
+	err = repo.collection.FindOne(ctx, filter).Decode(&res)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return thing, nil
+	return res, nil
 }
 
-type MongoFields struct {
-	FieldStr  string `json:"Field Str"`
-	FieldInt  int    `json:"Field Int"`
-	FieldBool bool   `json:"Field Bool"`
+func (repo repository) InsertOne(su shortUrl) error {
+	fmt.Println("Insert one")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+
+	defer cancel()
+
+	// thing := struct{ Fieldint int }{Fieldint: 12}
+
+	_, err := repo.collection.InsertOne(ctx, su)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (repo *repository) Init() error {
@@ -66,7 +84,6 @@ func (repo *repository) Init() error {
 	collection := client.Database("root").Collection("test2")
 
 	repo.collection = collection
-	// /mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false
 
 	return nil
 }
