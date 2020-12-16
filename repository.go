@@ -14,7 +14,7 @@ import (
 type Repository interface {
 	Init() error
 	FindById(id string) (shortUrl, error)
-	InsertOne(id shortUrl) error
+	InsertOne(su shortUrl) error
 }
 
 type repository struct {
