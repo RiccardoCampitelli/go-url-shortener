@@ -7,7 +7,7 @@ import (
 
 type UrlShortenerService interface {
 	Shorten(shortUrl) (string, error)
-	Fetch(string) string
+	Fetch(string) (shortUrl, error)
 }
 
 type urlShortenerService struct {
@@ -32,8 +32,17 @@ func (svc urlShortenerService) Shorten(s shortUrl) (string, error) {
 	return "thing", err
 }
 
-func (urlShortenerService) Fetch(s string) string {
-	return "thestring"
+func (svc urlShortenerService) Fetch(s string) (shortUrl, error) {
+
+	fmt.Println(s)
+
+	url, err := svc.repository.FindById(s)
+
+	if err != nil {
+		return url, err
+	}
+
+	return url, nil
 }
 
 var ErrEmpty = errors.New("Empty string")

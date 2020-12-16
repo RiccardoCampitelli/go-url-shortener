@@ -11,9 +11,10 @@ type shortenUrlResponse struct {
 }
 
 type findUrlRequest struct {
-	S string `json:"s"`
+	Id string `json:"s"`
 }
 
 type findUrlResponse struct {
-	V string `json:"v"`
+	FullUrl  string `json:"fullUrl"`
+	ShortUrl string `json:"shortUrl"`
 }

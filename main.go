@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -41,9 +42,9 @@ func main() {
 		encodeResponse,
 	)
 
-	router.Methods("GET").Path("/").Handler(findUrlHandler)
+	router.Methods("GET").Path("/shorturl/{id}").Handler(findUrlHandler)
 
-	router.Methods("GET").Path("/shorten").Handler(shortenUrlHandler)
+	router.Methods("POST").Path("/shorten").Handler(shortenUrlHandler)
 
 	http.ListenAndServe(":8080", router)
 }
@@ -59,9 +60,16 @@ func decodeShortenUrlRequest(_ context.Context, r *http.Request) (interface{}, e
 
 func decodeFindUrlRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request findUrlRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		return nil, err
+	vars := mux.Vars(r)
+
+	id, ok := vars["id"]
+
+	if !ok {
+		return nil, errors.New("Bad request")
 	}
+
+	request.Id = id
+
 	return request, nil
 }
 

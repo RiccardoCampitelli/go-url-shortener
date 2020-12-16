@@ -26,7 +26,7 @@ func makeShortenUrlEndpoint(svc UrlShortenerService) endpoint.Endpoint {
 func makeFindUrlEndpoint(svc UrlShortenerService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(findUrlRequest)
-		v := svc.Fetch(req.S)
-		return findUrlResponse{v}, nil
+		response, err := svc.Fetch(req.Id)
+		return findUrlResponse{FullUrl: response.FullUrl, ShortUrl: response.ShortUrl}, err
 	}
 }

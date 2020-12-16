@@ -33,16 +33,17 @@ func (mw loggingMiddleware) Shorten(s shortUrl) (output string, err error) {
 	return
 }
 
-func (mw loggingMiddleware) Fetch(s string) (n string) {
-	defer func(begin time.Time) {
+func (mw loggingMiddleware) Fetch(id string) (s shortUrl, err error) {
+	response, err := mw.next.Fetch(id)
+
+	defer func(begin time.Time, response shortUrl) {
 		mw.logger.Log(
 			"method", "fetch",
-			"input", s,
-			"n", n,
+			"input", s.FullUrl,
+			"n", response.FullUrl,
 			"took", time.Since(begin),
 		)
-	}(time.Now())
+	}(time.Now(), response)
 
-	n = mw.next.Fetch(s)
-	return
+	return response, err
 }

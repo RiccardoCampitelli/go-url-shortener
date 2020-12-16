@@ -14,7 +14,7 @@ import (
 
 type Repository interface {
 	Init() error
-	FindById(id string) (interface{}, error)
+	FindById(id string) (shortUrl, error)
 	InsertOne(id shortUrl) error
 }
 
@@ -22,7 +22,7 @@ type repository struct {
 	collection *mongo.Collection
 }
 
-func (repo *repository) FindById(id string) (interface{}, error) {
+func (repo *repository) FindById(id string) (shortUrl, error) {
 	fmt.Println("Fetch by " + id)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
@@ -31,7 +31,7 @@ func (repo *repository) FindById(id string) (interface{}, error) {
 
 	// _, err := repo.collection.InsertOne(ctx, thing)
 
-	res := struct{ Fieldint int }{}
+	res := shortUrl{}
 
 	objectId, err := primitive.ObjectIDFromHex(id)
 
@@ -41,7 +41,7 @@ func (repo *repository) FindById(id string) (interface{}, error) {
 	err = repo.collection.FindOne(ctx, filter).Decode(&res)
 
 	if err != nil {
-		return nil, err
+		return res, err
 	}
 
 	return res, nil
@@ -53,8 +53,6 @@ func (repo repository) InsertOne(su shortUrl) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 
 	defer cancel()
-
-	// thing := struct{ Fieldint int }{Fieldint: 12}
 
 	_, err := repo.collection.InsertOne(ctx, su)
 
