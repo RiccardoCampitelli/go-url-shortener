@@ -15,11 +15,11 @@ func makeShortenUrlEndpoint(svc UrlShortenerService) endpoint.Endpoint {
 
 		fmt.Println(req, su)
 
-		v, err := svc.Shorten(su)
+		res, err := svc.Shorten(su)
 		if err != nil {
-			return shortenUrlResponse{v, err.Error()}, nil
+			return shortenUrlResponse{ShortUrl: res.ShortUrl, Err: err.Error()}, err
 		}
-		return shortenUrlResponse{v, ""}, nil
+		return shortenUrlResponse{ShortUrl: res.ShortUrl, Err: ""}, nil
 	}
 }
 

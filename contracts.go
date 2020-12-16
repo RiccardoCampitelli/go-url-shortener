@@ -6,8 +6,8 @@ type shortenUrlRequest struct {
 }
 
 type shortenUrlResponse struct {
-	V   string `json:"v"`
-	Err string `json:"err,omitempty"` // errors don't JSON-marshal, so we use a string
+	ShortUrl string `json:"v"`
+	Err      string `json:"err,omitempty"` // errors don't JSON-marshal, so we use a string
 }
 
 type findUrlRequest struct {

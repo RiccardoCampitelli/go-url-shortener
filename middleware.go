@@ -18,12 +18,12 @@ func (mw loggingMiddleware) Wrap(svc UrlShortenerService) UrlShortenerService {
 	return loggingMiddleware{next: svc, logger: logger}
 }
 
-func (mw loggingMiddleware) Shorten(s shortUrl) (output string, err error) {
+func (mw loggingMiddleware) Shorten(s shortUrl) (output shortUrl, err error) {
 	defer func(begin time.Time) {
 		mw.logger.Log(
 			"method", "shorten",
-			"input", s,
-			"output", output,
+			"full", s.FullUrl,
+			"short", s.ShortUrl,
 			"err", err,
 			"took", time.Since(begin),
 		)
@@ -39,8 +39,7 @@ func (mw loggingMiddleware) Fetch(id string) (s shortUrl, err error) {
 	defer func(begin time.Time, response shortUrl) {
 		mw.logger.Log(
 			"method", "fetch",
-			"input", s.FullUrl,
-			"n", response.FullUrl,
+			"id", id,
 			"took", time.Since(begin),
 		)
 	}(time.Now(), response)

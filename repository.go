@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -23,20 +22,16 @@ type repository struct {
 }
 
 func (repo *repository) FindById(id string) (shortUrl, error) {
-	fmt.Println("Fetch by " + id)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 
 	defer cancel()
-
-	// _, err := repo.collection.InsertOne(ctx, thing)
 
 	res := shortUrl{}
 
 	objectId, err := primitive.ObjectIDFromHex(id)
 
 	filter := bson.M{"_id": objectId}
-	// filter := bson.D{{"fieldstr", id}}
 
 	err = repo.collection.FindOne(ctx, filter).Decode(&res)
 
@@ -48,7 +43,6 @@ func (repo *repository) FindById(id string) (shortUrl, error) {
 }
 
 func (repo repository) InsertOne(su shortUrl) error {
-	fmt.Println("Insert one")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 

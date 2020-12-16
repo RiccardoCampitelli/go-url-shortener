@@ -2,11 +2,10 @@ package main
 
 import (
 	"errors"
-	"fmt"
 )
 
 type UrlShortenerService interface {
-	Shorten(shortUrl) (string, error)
+	Shorten(shortUrl) (shortUrl, error)
 	Fetch(string) (shortUrl, error)
 }
 
@@ -14,27 +13,14 @@ type urlShortenerService struct {
 	repository Repository
 }
 
-func (svc urlShortenerService) Shorten(s shortUrl) (string, error) {
-	// if s == "" {
-	// 	return "", ErrEmpty
-	// }
-	// TODO: Validation
-
-	// res, err := svc.repository.FindById(s.fullUrl)
-	fmt.Println(s)
+func (svc urlShortenerService) Shorten(s shortUrl) (shortUrl, error) {
 
 	err := svc.repository.InsertOne(s)
 
-	if err != nil {
-		return "", err
-	}
-
-	return "thing", err
+	return s, err
 }
 
 func (svc urlShortenerService) Fetch(s string) (shortUrl, error) {
-
-	fmt.Println(s)
 
 	url, err := svc.repository.FindById(s)
 
